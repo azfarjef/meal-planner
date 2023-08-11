@@ -12,19 +12,20 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useGetRecipeQuery } from "@/state/api";
+import { useCreatePlanMutation, useGetRecipeQuery } from "@/state/api";
 import { useParams } from "react-router-dom";
 import { useState } from "react";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import daysjs from "dayjs";
+import daysjs, { Dayjs } from "dayjs";
 
 const RecipeDetails = () => {
   const { recipeId } = useParams();
   const { data: recipe, isLoading } = useGetRecipeQuery(Number(recipeId));
+  const [createPlan] = useCreatePlanMutation();
 
   const [open, setOpen] = useState(false);
-  const [date, setDate] = useState(daysjs());
+  const [date, setDate] = useState<Dayjs>(daysjs());
   const [mealType, setMealType] = useState("breakfast");
   const [amount, setAmount] = useState(1);
 
@@ -51,6 +52,22 @@ const RecipeDetails = () => {
     setOpen(false);
   };
 
+  const handleCreatePlan = async () => {
+    try {
+      await createPlan({
+        user_id: 1,
+        recipe_id: Number(recipeId),
+        fdc_id: null,
+        date: date.format("YYYY-MM-DD"),
+        meal_type: mealType,
+        amount: amount,
+      }).unwrap();
+    } catch (error) {
+      console.log(error);
+    }
+    setOpen(false);
+  };
+
   return (
     <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
       <Card sx={{ maxWidth: 600 }}>
@@ -73,7 +90,9 @@ const RecipeDetails = () => {
                   sx={{ minWidth: "300px" }}
                   format="DD/MM/YYYY"
                   value={date}
-                  onChange={(date) => setDate(date)}
+                  onChange={(newDate) =>
+                    newDate !== null ? setDate(date) : null
+                  }
                 />
               </LocalizationProvider>
 
@@ -96,7 +115,7 @@ const RecipeDetails = () => {
               />
             </DialogContent>
             <DialogActions>
-              <Button variant="contained" onClick={() => setOpen(false)}>
+              <Button variant="contained" onClick={handleCreatePlan}>
                 ADD
               </Button>
             </DialogActions>

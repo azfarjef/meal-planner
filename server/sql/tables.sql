@@ -86,11 +86,10 @@ CREATE TABLE meal_plan (
 	id SERIAL PRIMARY KEY,
 	user_id INTEGER,
 	recipe_id INTEGER,
+	fdc_id INTEGER,
 	date DATE,
 	meal_type VARCHAR(255),
 	amount NUMERIC,
-	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	updated_at TIMESTAMP,
 	FOREIGN KEY (user_id) REFERENCES user (id)
 	FOREIGN KEY (recipe_id) REFERENCES recipe (id)
 );

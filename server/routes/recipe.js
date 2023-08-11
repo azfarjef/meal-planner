@@ -368,7 +368,7 @@ router.get("/:id", async (req, res) => {
     //   nutrient.dv = userdata.nutritions[nutrient.nutrient_id];
     // }
 
-    console.log(nutrients.slice(0, 30));
+    // console.log(nutrients.slice(0, 30));
 
     res.status(200).json({ ...recipe, ingredients, nutrients });
   } catch (error) {

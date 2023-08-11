@@ -148,3 +148,12 @@ export interface GetRecipesResponse {
   preparation_time: number;
   image: string;
 }
+
+export interface CreatePlanRequest {
+  user_id: number;
+  recipe_id: number | null;
+  fdc_id: number | null;
+  date: string;
+  meal_type: string;
+  amount: number;
+}

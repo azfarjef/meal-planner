@@ -8,6 +8,7 @@ import {
   GetMeasureUnitNameResponse,
   CreateIngredientRequest,
   GetRecipesResponse,
+  CreatePlanRequest,
 } from "./types";
 
 export const api = createApi({
@@ -49,6 +50,13 @@ export const api = createApi({
     getRecipes: build.query<Array<GetRecipesResponse>, void>({
       query: () => `recipe`,
     }),
+    createPlan: build.mutation<string, CreatePlanRequest>({
+      query: (body) => ({
+        url: "plan/create",
+        method: "POST",
+        body,
+      }),
+    }),
   }),
 });
 
@@ -59,4 +67,4 @@ export const { useGetRecipeQuery } = api;
 export const { useGetNutrientNameQuery } = api;
 export const { useGetMeasureUnitNameQuery } = api;
 export const { useCreateIngredientMutation } = api;
-export const { useGetRecipesQuery } = api;
+export const { useGetRecipesQuery, useCreatePlanMutation } = api;
