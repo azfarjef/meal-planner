@@ -157,3 +157,11 @@ export interface CreatePlanRequest {
   meal_type: string;
   amount: number;
 }
+
+export interface GetDayPlanResponse {
+  id: number;
+  name: string;
+  meal_type: string;
+  amount: number;
+  image: string;
+}

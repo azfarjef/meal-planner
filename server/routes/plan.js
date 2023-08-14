@@ -28,4 +28,25 @@ router.post("/create", async (req, res) => {
   }
 });
 
+router.get("/:date", async (req, res) => {
+  const date = req.params.date;
+
+  console.log(date);
+
+  try {
+    const dateQuery = `
+      SELECT meal_plan.id, recipe.name AS name, meal_plan.meal_type, meal_plan.amount, recipe.image AS image
+      FROM meal_plan
+      INNER JOIN recipe ON meal_plan.recipe_id = recipe.id
+      WHERE meal_plan.date = $1
+    `;
+    const meals = await pool.query(dateQuery, [date]);
+
+    res.status(200).json(meals.rows);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error });
+  }
+});
+
 export default router;

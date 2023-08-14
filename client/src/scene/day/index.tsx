@@ -1,8 +1,7 @@
+import { useGetPlanQuery } from "@/state/api";
 import { Divider, Typography } from "@mui/material";
 import dayjs from "dayjs";
-
-const date = dayjs("2023-07-27").format("dddd, DD/MM/YYYY ");
-console.log(date);
+import { useParams } from "react-router-dom";
 
 const meals = [
   {
@@ -46,33 +45,47 @@ const macros = [
 const mealTypes = ["breakfast", "lunch", "dinner", "snack"];
 
 const DayPlan = () => {
+  const { date } = useParams();
+  console.log(date);
+
+  if (!date) {
+    return <Typography variant="h5">Date not provided</Typography>;
+  }
+
+  const dateFormatted = dayjs(date).format("dddd, DD/MM/YYYY ");
+
+  const { data: meals, isLoading } = useGetPlanQuery(date);
+
   return (
     <>
       <Divider />
       <Typography variant="h4">DayPlan</Typography>
-      <Typography variant="h5">{date}</Typography>
+      <Typography variant="h5">{dateFormatted}</Typography>
+      <Divider />
+
       <div>
-        {mealTypes.map((mealType) => (
-          <div>
-            <Typography variant="h6">
-              {mealType.charAt(0).toUpperCase() + mealType.slice(1)}
-            </Typography>
-            {meals
-              .filter((meal) => meal.meal_type === mealType)
-              .map((meal) => (
-                <div>
-                  <div>{meal.name}</div>
-                  <img
-                    src={meal.image}
-                    alt={meal.name}
-                    style={{
-                      width: "100px",
-                    }}
-                  />
-                </div>
-              ))}
-          </div>
-        ))}
+        {meals &&
+          mealTypes.map((mealType) => (
+            <div key={mealType}>
+              <Typography variant="h6">
+                {mealType.charAt(0).toUpperCase() + mealType.slice(1)}
+              </Typography>
+              {meals
+                .filter((meal) => meal.meal_type === mealType)
+                .map((meal) => (
+                  <div key={meal.id}>
+                    <div>{meal.name}</div>
+                    <img
+                      src={meal.image}
+                      alt={meal.name}
+                      style={{
+                        width: "100px",
+                      }}
+                    />
+                  </div>
+                ))}
+            </div>
+          ))}
       </div>
     </>
   );
