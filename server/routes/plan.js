@@ -35,9 +35,14 @@ router.get("/:date", async (req, res) => {
 
   try {
     const dateQuery = `
-      SELECT meal_plan.id, recipe.name AS name, meal_plan.meal_type, meal_plan.amount, recipe.image AS image
+      SELECT meal_plan.id,
+        COALESCE(recipe.name, food.description) AS name,
+        meal_plan.meal_type,
+        meal_plan.amount,
+        recipe.image
       FROM meal_plan
-      INNER JOIN recipe ON meal_plan.recipe_id = recipe.id
+      LEFT JOIN recipe ON meal_plan.recipe_id = recipe.id
+      LEFT JOIN food ON meal_plan.fdc_id = food.fdc_id
       WHERE meal_plan.date = $1
     `;
     const meals = await pool.query(dateQuery, [date]);

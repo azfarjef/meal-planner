@@ -37,7 +37,7 @@ function App() {
             <Route path="/addIngredient" element={<AddIngredient />} />
             {/* <Route path="/recipe" element={<Recipe />} /> */}
             <Route path="/calendar" element={<Calendar />} />
-            <Route path="/day/:date" element={<DayPlan />} />
+            <Route path="/day/:dateParam" element={<DayPlan />} />
             <Route path="/recipe/:recipeId" element={<RecipeDetails />} />
             <Route path="/recipeBuilder" element={<RecipeBuilder />} />
             <Route path="/grocery" element={<Grocery />} />
