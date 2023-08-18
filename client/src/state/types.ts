@@ -159,9 +159,21 @@ export interface CreatePlanRequest {
 }
 
 export interface GetDayPlanResponse {
-  id: number;
-  name: string;
-  meal_type: string;
-  amount: number;
-  image: string;
+  meals: Array<{
+    id: number;
+    recipe_id: number;
+    fdc_id: number;
+    name: string;
+    meal_type: string;
+    amount: number;
+    image: string;
+    servings: number;
+  }>;
+  nutrients: Array<{
+    id: number;
+    name: string;
+    unit_name: string;
+    amount: number;
+    dv: number;
+  }>;
 }

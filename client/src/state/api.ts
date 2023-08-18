@@ -58,7 +58,7 @@ export const api = createApi({
         body,
       }),
     }),
-    getPlan: build.query<Array<GetDayPlanResponse>, string>({
+    getPlan: build.query<GetDayPlanResponse, string>({
       query: (date) => `plan/${date}`,
     }),
   }),

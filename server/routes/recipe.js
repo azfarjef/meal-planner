@@ -44,7 +44,7 @@ const userdata1 = {
   },
 };
 
-const userdata = {
+export const userdata = {
   id: 1,
   name: "AJ",
   dob: "1996-01-01",
@@ -85,7 +85,7 @@ const userdata = {
   },
 };
 
-const nutrientOrder = [
+export const nutrientOrder = [
   1008, 2039, 1005, 1003, 1004, 1063, 1093, 1079, 1258, 1253, 1087, 1090, 1092,
   1089, 1095, 1091, 1106, 1165, 1166, 1167, 1175, 1186, 1178, 1162, 1114, 1109,
   1183, 1184, 1185, 1051,

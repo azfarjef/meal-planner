@@ -90,13 +90,27 @@ const DayPlan = () => {
 
   const dateFormatted = dayjs(dateParam).format("dddd, DD/MM/YYYY ");
 
-  const { data: meals, isLoading } = useGetPlanQuery(dateParam);
+  const { data, isLoading } = useGetPlanQuery(dateParam);
+  console.log(data);
+  const meals = data?.meals;
+  const nutrients = data?.nutrients;
+
+  // const weight =
+  //   ingredient && ingredient.foodportions[unit]
+  //     ? (ingredient.foodportions[unit].gramWeight /
+  //         (ingredient.foodportions[unit].amount | 1)) *
+  //       portion
+  //     : 0;
 
   const weight =
     ingredient && ingredient.foodportions[unit]
-      ? (ingredient.foodportions[unit].gramWeight /
-          (ingredient.foodportions[unit].amount | 1)) *
-        portion
+      ? parseFloat(
+          (
+            (ingredient.foodportions[unit].gramWeight /
+              (ingredient.foodportions[unit].amount || 1)) *
+            portion
+          ).toFixed(2)
+        )
       : 0;
 
   const handleOptionClick = (
@@ -261,7 +275,9 @@ const DayPlan = () => {
                 .filter((meal) => meal.meal_type === mealType)
                 .map((meal) => (
                   <div key={meal.id}>
-                    <div>{meal.name}</div>
+                    <div>
+                      {meal.name} ({meal.amount})
+                    </div>
                     <img
                       src={meal.image}
                       alt={meal.name}
@@ -273,6 +289,18 @@ const DayPlan = () => {
                 ))}
             </div>
           ))}
+      </div>
+
+      <div>
+        <Typography variant="h6" gutterBottom>
+          Total Nutrition:
+        </Typography>
+        {nutrients?.slice(0, 29).map((item, index) => (
+          <Typography variant="body2" gutterBottom key={index}>
+            {item.name}: {item.amount.toFixed(2)} {item.unit_name} ,{" "}
+            {((item.amount / item.dv) * 100).toFixed(0)}%
+          </Typography>
+        ))}
       </div>
     </>
   );

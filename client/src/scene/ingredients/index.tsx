@@ -106,11 +106,14 @@ const Ingredients = () => {
 
   const weight =
     ingredient && ingredient.foodportions[unit]
-      ? (ingredient.foodportions[unit].gramWeight /
-          (ingredient.foodportions[unit].amount | 1)) *
-        portion
+      ? parseFloat(
+          (
+            (ingredient.foodportions[unit].gramWeight /
+              (ingredient.foodportions[unit].amount || 1)) *
+            portion
+          ).toFixed(2)
+        )
       : 0;
-  console.log("weight:", weight);
 
   const handleOptionClick = (
     _event: React.ChangeEvent<object>,

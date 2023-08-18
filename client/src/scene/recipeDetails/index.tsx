@@ -91,7 +91,7 @@ const RecipeDetails = () => {
                   format="DD/MM/YYYY"
                   value={date}
                   onChange={(newDate) =>
-                    newDate !== null ? setDate(date) : null
+                    newDate !== null ? setDate(newDate) : null
                   }
                 />
               </LocalizationProvider>
