@@ -94,6 +94,7 @@ export interface GetRecipeResponse {
   updated_at: string;
   id: number;
   source: string;
+  price: number;
   ingredients: Array<{
     id: number;
     recipe_id: number;

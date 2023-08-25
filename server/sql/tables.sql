@@ -97,7 +97,7 @@ CREATE TABLE meal_plan (
 CREATE TABLE price (
 	id SERIAL PRIMARY KEY,
 	fdc_id INTEGER,
-	amount NUMERIC,
-	price_230728 NUMERIC,
+	name VARCHAR(255),
+	230728 NUMERIC,
 	FOREIGN KEY (fdc_id) REFERENCES food (fdc_id)
 );

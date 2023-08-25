@@ -44,6 +44,7 @@ const RecipeDetails = () => {
     instructions,
     nutrients,
     servings,
+    price,
   } = recipe;
 
   const slicedNutrients = nutrients.slice(0, 29);
@@ -141,6 +142,10 @@ const RecipeDetails = () => {
 
           <Typography variant="body1" gutterBottom>
             Servings: {servings}
+          </Typography>
+
+          <Typography variant="body1" gutterBottom>
+            Cost per serving: RM {price}
           </Typography>
 
           <Typography variant="h6" gutterBottom>

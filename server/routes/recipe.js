@@ -297,6 +297,20 @@ router.get("/:id", async (req, res) => {
       return res.status(404).json({ error: "Recipe not found" });
     }
 
+    const priceQuery = `
+      SELECT ri.recipe_id,
+        SUM(p."230825" * ri.amount / 100) AS price
+      FROM recipe_ingredient ri
+      JOIN price p ON ri.fdc_id = p.fdc_id
+      WHERE ri.recipe_id = $1
+      GROUP BY ri.recipe_id;
+    `;
+
+    const priceResult = await pool.query(priceQuery, [id]);
+    recipe.price = parseFloat(
+      priceResult.rows[0].price / recipe.servings
+    ).toFixed(2);
+
     const ingredientsQuery = `
   		SELECT * FROM recipe_ingredient WHERE recipe_id = $1;
   	`;
@@ -316,8 +330,44 @@ router.get("/:id", async (req, res) => {
     const nutrientsResult = await pool.query(nutrientsQuery, [id]);
     const nutri = nutrientsResult.rows;
 
+    const combinedNutrients = {};
+
+    nutri.forEach((nutrient) => {
+      const { nutrient_id, name, amount } = nutrient;
+
+      if (name.includes("Carbohydrate")) {
+        if (!combinedNutrients[2039]) {
+          combinedNutrients[2039] = {
+            ...nutrient,
+            nutrient_id: 2039,
+            amount: 0,
+            dv: userdata.nutritions[2039],
+          };
+        }
+        combinedNutrients[2039].amount += Number(amount);
+      } else if (name.includes("Vitamin K")) {
+        if (!combinedNutrients[1183]) {
+          combinedNutrients[1183] = {
+            ...nutrient,
+            nutrient_id: 1183,
+            amount: 0,
+            dv: userdata.nutritions[1183],
+          };
+        }
+        combinedNutrients[1183].amount += Number(amount);
+      } else {
+        combinedNutrients[nutrient_id] = {
+          ...nutrient,
+          amount: Number(amount),
+          dv: userdata.nutritions[nutrient_id] || 0,
+        };
+      }
+    });
+
+    const combNutrients = Object.values(combinedNutrients);
+
     // Sort nutrients by nutrientOrder
-    const sortedNutrients = nutri.sort((a, b) => {
+    const nutrients = combNutrients.sort((a, b) => {
       const aIndex = nutrientOrder.indexOf(a.nutrient_id);
       const bIndex = nutrientOrder.indexOf(b.nutrient_id);
 
@@ -326,42 +376,6 @@ router.get("/:id", async (req, res) => {
 
       return aIndex - bIndex;
     });
-
-    const combinedNutrients = {};
-
-    sortedNutrients.forEach((nutrient) => {
-      const { nutrient_id, name, amount } = nutrient;
-
-      if (name.includes("Carbohydrate")) {
-        if (!combinedNutrients["Carbohydrates"]) {
-          combinedNutrients["Carbohydrates"] = {
-            ...nutrient,
-            nutrient_id: 2039,
-            amount: 0,
-            dv: userdata.nutritions[2039],
-          };
-        }
-        combinedNutrients["Carbohydrates"].amount += Number(amount);
-      } else if (name.includes("Vitamin K")) {
-        if (!combinedNutrients["Vitamin K"]) {
-          combinedNutrients["Vitamin K"] = {
-            ...nutrient,
-            nutrient_id: 1183,
-            amount: 0,
-            dv: userdata.nutritions[1183],
-          };
-        }
-        combinedNutrients["Vitamin K"].amount += Number(amount);
-      } else {
-        combinedNutrients[name] = {
-          ...nutrient,
-          amount: Number(amount),
-          dv: userdata.nutritions[nutrient_id] || 0,
-        };
-      }
-    });
-
-    const nutrients = Object.values(combinedNutrients);
 
     // for (const nutrient of nutrients) {
     //   nutrient.amount = Number(nutrient.amount);
