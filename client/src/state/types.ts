@@ -169,6 +169,7 @@ export interface GetDayPlanResponse {
     amount: number;
     image: string;
     servings: number;
+    price: number;
   }>;
   nutrients: Array<{
     id: number;
@@ -177,4 +178,5 @@ export interface GetDayPlanResponse {
     amount: number;
     dv: number;
   }>;
+  total_price: number;
 }

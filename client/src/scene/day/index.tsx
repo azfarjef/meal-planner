@@ -17,11 +17,11 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import daysjs, { Dayjs } from "dayjs";
+// import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+// import daysjs, { Dayjs } from "dayjs";
 import dayjs from "dayjs";
 import { useParams } from "react-router-dom";
-import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+// import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { useState } from "react";
 import { GetIngredientNameResponse } from "@/state/types";
 
@@ -75,9 +75,9 @@ const DayPlan = () => {
   const [portion, setPortion] = useState(100);
   const [unit, setUnit] = useState(0);
   const [open, setOpen] = useState(false);
-  const [date, setDate] = useState<Dayjs>(daysjs());
+  // const [date, setDate] = useState<Dayjs>(daysjs());
   const [mealType, setMealType] = useState("breakfast");
-  const [amount, setAmount] = useState(1);
+  // const [amount, setAmount] = useState(1);
 
   const [createPlan] = useCreatePlanMutation();
   const { data: ingredientName } = useGetIngredientNameQuery(dataSource);
@@ -276,7 +276,7 @@ const DayPlan = () => {
                 .map((meal) => (
                   <div key={meal.id}>
                     <div>
-                      {meal.name} ({meal.amount})
+                      {meal.name} ({meal.amount}) (RM {meal.price})
                     </div>
                     <img
                       src={meal.image}
@@ -290,6 +290,10 @@ const DayPlan = () => {
             </div>
           ))}
       </div>
+
+      <Typography variant="h6" gutterBottom>
+        Total Cost: RM {data?.total_price}
+      </Typography>
 
       <div>
         <Typography variant="h6" gutterBottom>

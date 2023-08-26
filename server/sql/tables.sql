@@ -1,7 +1,9 @@
 CREATE TABLE food (
   fdc_id INTEGER PRIMARY KEY,
   data_type VARCHAR(255),
-  description VARCHAR(255)
+  description VARCHAR(255),
+	barcode VARCHAR(255),
+	image VARCHAR(500),
 );
 
 CREATE TABLE nutrient (

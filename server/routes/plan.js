@@ -1,6 +1,7 @@
 import express from "express";
 import pool from "../db.js";
 import { userdata, nutrientOrder } from "./recipe.js";
+import e from "express";
 
 const router = express.Router();
 
@@ -35,22 +36,63 @@ router.get("/:date", async (req, res) => {
   console.log(date);
 
   try {
+    // const dateQuery = `
+    //   SELECT meal_plan.id,
+    //     meal_plan.recipe_id,
+    //     meal_plan.fdc_id,
+    //     COALESCE(recipe.name, food.description) AS name,
+    //     meal_plan.meal_type,
+    //     meal_plan.amount,
+    //     recipe.image,
+    //     recipe.servings
+    //   FROM meal_plan
+    //   LEFT JOIN recipe ON meal_plan.recipe_id = recipe.id
+    //   LEFT JOIN food ON meal_plan.fdc_id = food.fdc_id
+    //   WHERE meal_plan.date = $1
+    // `;
+
     const dateQuery = `
-      SELECT meal_plan.id,
-        meal_plan.recipe_id,
-        meal_plan.fdc_id,
-        COALESCE(recipe.name, food.description) AS name,
-        meal_plan.meal_type,
-        meal_plan.amount,
-        recipe.image,
-        recipe.servings
-      FROM meal_plan
-      LEFT JOIN recipe ON meal_plan.recipe_id = recipe.id
-      LEFT JOIN food ON meal_plan.fdc_id = food.fdc_id
-      WHERE meal_plan.date = $1
+      SELECT mp.id,
+        mp.recipe_id,
+        mp.fdc_id,
+        COALESCE(r.name, f.description) AS name,
+        mp.meal_type,
+        mp.amount,
+        COALESCE(r.image, f.image) AS image,
+        r.servings,
+        CASE
+          WHEN mp.recipe_id IS NOT NULL THEN rp.price / r.servings * mp.amount
+          ELSE p."230825" * mp.amount / 100
+        END AS price
+      FROM meal_plan mp
+      LEFT JOIN (
+        SELECT ri.recipe_id, 
+          SUM(p."230825" * ri.amount / 100) AS price
+        FROM recipe_ingredient ri
+        JOIN price p ON ri.fdc_id = p.fdc_id
+        GROUP BY ri.recipe_id
+      ) rp ON mp.recipe_id = rp.recipe_id
+      LEFT JOIN price p ON mp.fdc_id = p.fdc_id
+      LEFT JOIN recipe r ON mp.recipe_id = r.id
+      LEFT JOIN food f ON mp.fdc_id = f.fdc_id
+      WHERE mp.date = $1;
     `;
     const mealsResult = await pool.query(dateQuery, [date]);
     const meals = mealsResult.rows;
+
+    // Convert meal.price data type from string to float
+    meals.forEach((meal) => {
+      if (!meal.price) meal.price = 0;
+      else meal.price = Number(parseFloat(meal.price).toFixed(2));
+    });
+
+    // Print price data type
+    console.log(typeof meals[0].price);
+
+    const total_price = meals.reduce((acc, meal) => {
+      console.log(acc);
+      return acc + meal.price;
+    }, 0);
 
     const totalNutrients = {};
 
@@ -160,7 +202,11 @@ router.get("/:date", async (req, res) => {
       return aIndex - bIndex;
     });
 
-    const mealsWithNutrients = { meals, nutrients: sortedNutrients };
+    const mealsWithNutrients = {
+      meals,
+      nutrients: sortedNutrients,
+      total_price,
+    };
 
     res.status(200).json(mealsWithNutrients);
   } catch (error) {
