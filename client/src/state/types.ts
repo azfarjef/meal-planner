@@ -180,3 +180,17 @@ export interface GetDayPlanResponse {
   }>;
   total_price: number;
 }
+
+export interface GetGroceryListResponse {
+  groceries: Array<{
+    fdc_id: number;
+    name: string;
+    amount: number;
+    // amount_alt: number;
+    // unit_alt: string;
+    price: number;
+    image: string;
+    bought: boolean;
+  }>;
+  total_price: number;
+}

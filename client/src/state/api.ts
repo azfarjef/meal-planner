@@ -10,6 +10,7 @@ import {
   GetRecipesResponse,
   CreatePlanRequest,
   GetDayPlanResponse,
+  GetGroceryListResponse,
 } from "./types";
 
 export const api = createApi({
@@ -61,6 +62,13 @@ export const api = createApi({
     getPlan: build.query<GetDayPlanResponse, string>({
       query: (date) => `plan/${date}`,
     }),
+    getGroceryList: build.query<
+      GetGroceryListResponse,
+      { dateFrom: string; dateTo: string }
+    >({
+      query: ({ dateFrom, dateTo }) =>
+        `grocery?dateFrom=${dateFrom}&dateTo=${dateTo}`,
+    }),
   }),
 });
 
@@ -71,5 +79,9 @@ export const { useGetRecipeQuery } = api;
 export const { useGetNutrientNameQuery } = api;
 export const { useGetMeasureUnitNameQuery } = api;
 export const { useCreateIngredientMutation } = api;
-export const { useGetRecipesQuery, useCreatePlanMutation, useGetPlanQuery } =
-  api;
+export const {
+  useGetRecipesQuery,
+  useCreatePlanMutation,
+  useGetPlanQuery,
+  useGetGroceryListQuery,
+} = api;
