@@ -89,70 +89,107 @@ router.get("/:date", async (req, res) => {
     // Print price data type
     console.log(typeof meals[0].price);
 
-    const total_price = meals.reduce((acc, meal) => {
-      console.log(acc);
-      return acc + meal.price;
-    }, 0);
+    const total_price = Number(
+      parseFloat(
+        meals.reduce((acc, meal) => {
+          console.log(acc);
+          return acc + meal.price;
+        }, 0)
+      ).toFixed(2)
+    );
 
-    const totalNutrients = {};
+    // const totalNutrients = {};
 
-    for (const meal of meals) {
-      console.log(meal.fdc_id);
+    // for (const meal of meals) {
+    //   console.log(meal.fdc_id);
 
-      let foodNutrients = [];
-      let weight = 0;
-      if (meal.recipe_id) {
-        const recipeNutrientQuery = `
-          SELECT nutrient_id AS id,
-            name,
-            unit_name,
-            amount
-          FROM recipe_nutrient WHERE recipe_id = $1;
-        `;
-        const recipeNutrientResult = await pool.query(recipeNutrientQuery, [
-          meal.recipe_id,
-        ]);
-        foodNutrients = recipeNutrientResult.rows;
-        weight = meal.amount / meal.servings;
-      } else {
-        const foodQuery = `
-          SELECT json_agg(json_build_object(
-            'id', n.id,
-            'name', n.name,
-            'unit_name', n.unit_name,
-            'amount', fn.amount
-          ))
-          FROM nutrient n
-          JOIN food_nutrient fn ON n.id = fn.nutrient_id
-          WHERE fn.fdc_id = $1
-        `;
+    //   let foodNutrients = [];
+    //   let weight = 0;
+    //   if (meal.recipe_id) {
+    //     const recipeNutrientQuery = `
+    //       SELECT nutrient_id AS id,
+    //         name,
+    //         unit_name,
+    //         amount
+    //       FROM recipe_nutrient WHERE recipe_id = $1;
+    //     `;
+    //     const recipeNutrientResult = await pool.query(recipeNutrientQuery, [
+    //       meal.recipe_id,
+    //     ]);
+    //     foodNutrients = recipeNutrientResult.rows;
+    //     weight = meal.amount / meal.servings;
+    //   } else {
+    //     const foodQuery = `
+    //       SELECT json_agg(json_build_object(
+    //         'id', n.id,
+    //         'name', n.name,
+    //         'unit_name', n.unit_name,
+    //         'amount', fn.amount
+    //       ))
+    //       FROM nutrient n
+    //       JOIN food_nutrient fn ON n.id = fn.nutrient_id
+    //       WHERE fn.fdc_id = $1
+    //     `;
 
-        const foodResult = await pool.query(foodQuery, [meal.fdc_id]);
-        foodNutrients = foodResult.rows[0].json_agg;
-        weight = meal.amount / 100;
-      }
+    //     const foodResult = await pool.query(foodQuery, [meal.fdc_id]);
+    //     foodNutrients = foodResult.rows[0].json_agg;
+    //     weight = meal.amount / 100;
+    //   }
 
-      // Calculate total nutrients of each meal and add to meals.nutrients
-      for (const nutrient of foodNutrients) {
-        if (!totalNutrients[nutrient.id]) {
-          totalNutrients[nutrient.id] = {
-            id: nutrient.id,
-            name: nutrient.name,
-            unit_name: nutrient.unit_name,
-            amount: 0,
-          };
-        }
-        totalNutrients[nutrient.id].amount += nutrient.amount * weight;
+    //   // Calculate total nutrients of each meal and add to meals.nutrients
+    //   for (const nutrient of foodNutrients) {
+    //     if (!totalNutrients[nutrient.id]) {
+    //       totalNutrients[nutrient.id] = {
+    //         id: nutrient.id,
+    //         name: nutrient.name,
+    //         unit_name: nutrient.unit_name,
+    //         amount: 0,
+    //       };
+    //     }
+    //     totalNutrients[nutrient.id].amount += nutrient.amount * weight;
 
-        if (nutrient.id === 1008) {
-          console.log(`Energy KCAL : ${nutrient.amount * weight}`);
-        }
-      }
-    }
+    //     if (nutrient.id === 1008) {
+    //       console.log(`Energy KCAL : ${nutrient.amount * weight}`);
+    //     }
+    //   }
+    // }
 
-    console.log(`Total Energy KCAL : ${totalNutrients[1008].amount}`);
+    // console.log(`Total Energy KCAL : ${totalNutrients[1008].amount}`);
 
-    const totalNutrientsArray = Object.values(totalNutrients);
+    // const totalNutrientsArray = Object.values(totalNutrients);
+
+    const nutrientsQuery = `
+      SELECT
+        n.id,
+        n.name,
+        n.unit_name,
+        SUM(amount) AS amount
+      FROM (
+        SELECT
+          mp.id,
+          mp.recipe_id,
+          mp.fdc_id,
+          mp.date,
+          CASE
+            WHEN mp.recipe_id IS NOT NULL THEN rn.nutrient_id
+            ELSE fn.nutrient_id
+          END AS nutrient_id,
+          CASE
+            WHEN mp.recipe_id IS NOT NULL THEN rn.amount / r.servings * mp.amount
+            ELSE fn.amount * mp.amount / 100
+          END AS amount
+        FROM meal_plan mp
+        LEFT JOIN recipe_nutrient rn ON mp.recipe_id = rn.recipe_id
+        LEFT JOIN food_nutrient fn ON mp.fdc_id = fn.fdc_id
+        LEFT JOIN recipe r ON mp.recipe_id = r.id
+        WHERE date = $1
+      ) AS subquery
+      JOIN nutrient n ON subquery.nutrient_id = n.id
+      GROUP BY n.id, n.name, n.unit_name;
+      `;
+
+    const nutrientsResult = await pool.query(nutrientsQuery, [date]);
+    const totalNutrientsArray = nutrientsResult.rows;
 
     // Combine carbohydrate and vitamin-K and add DV
     const combinedNutrients = {};
