@@ -1,12 +1,10 @@
 import { useGetRecipesQuery } from "@/state/api";
 import {
-  AppBar,
   Card,
   CardActionArea,
   CardContent,
   CardMedia,
   Container,
-  Toolbar,
   Typography,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
@@ -21,13 +19,7 @@ const Recipe = () => {
 
   return (
     <div style={{ flexGrow: 1 }}>
-      <AppBar position="static">
-        <Toolbar>
-          <Typography variant="h6" style={{ flexGrow: 1 }}>
-            Recipes
-          </Typography>
-        </Toolbar>
-      </AppBar>
+      <Typography variant="h4">Recipes</Typography>
       <Container style={{ marginTop: "2rem" }}>
         {recipes.map((recipe) => (
           <Card
