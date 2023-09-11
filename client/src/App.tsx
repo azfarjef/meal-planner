@@ -13,7 +13,17 @@ import { useEffect } from "react";
 import Grocery from "./scene/grocery";
 import Navbar from "./components/navbar";
 
-const theme = createTheme();
+const theme = createTheme({
+  palette: {
+    background: {
+      default: "F9FAFC",
+      paper: "#FFFFFF",
+    },
+  },
+  typography: {
+    fontFamily: '"Inter", sans-serif',
+  },
+});
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
