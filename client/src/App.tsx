@@ -16,12 +16,21 @@ import Navbar from "./components/navbar";
 const theme = createTheme({
   palette: {
     background: {
-      default: "F9FAFC",
+      default: "#F9FAFC",
       paper: "#FFFFFF",
     },
   },
   typography: {
     fontFamily: '"Inter", sans-serif',
+    h4: {
+      fontWeight: 700,
+      fontSize: "2.25rem",
+      lineHeight: 1.375,
+    },
+    h6: {
+      fontWeight: 600,
+      fontSize: "1.125rem",
+    },
   },
 });
 

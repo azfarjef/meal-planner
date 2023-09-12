@@ -17,7 +17,6 @@ import KitchenIcon from "@mui/icons-material/Kitchen";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import SettingsIcon from "@mui/icons-material/Settings";
 
 // Format today to YYYY-MM-DD
 const today = new Date().toISOString().split("T")[0];
@@ -62,7 +61,7 @@ const Navbar = () => {
 
   return (
     <>
-      <AppBar sx={{ mb: "10px", backgroundColor: "#0d2343" }}>
+      <AppBar sx={{ mb: "10px", backgroundColor: "#111827" }}>
         <Toolbar>
           <IconButton
             color="inherit"

@@ -11,6 +11,9 @@ import {
   Button,
   Select,
   MenuItem,
+  Card,
+  Grid,
+  CardContent,
 } from "@mui/material";
 import { useState } from "react";
 import { GetIngredientNameResponse } from "@/state/types";
@@ -255,125 +258,178 @@ const Ingredients = () => {
   };
 
   return (
-    <>
-      <div>
-        <Typography variant="h6">Recipe Name</Typography>
-        <TextField
-          label="Recipe Name"
-          type="text"
-          value={recipeName}
-          onChange={(e) => setRecipeName(e.target.value)}
-          fullWidth
-        />
-      </div>
-
-      <div>
-        <Typography variant="h6">Recipe Source</Typography>
-        <TextField
-          label="Recipe Source (optional)"
-          type="text"
-          value={recipeSource}
-          onChange={(e) => setRecipeSource(e.target.value)}
-          fullWidth
-        />
-      </div>
-
-      <div>
-        <Typography variant="h6">Ingredients</Typography>
-        <Autocomplete
-          options={ingredientName || []}
-          getOptionLabel={(option) => option.description}
-          onChange={handleOptionClick}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              label="Search for ingredients"
-              variant="outlined"
-              size="small"
-              fullWidth
-              // value={query}
-              // onChange={(e) => setQuery(e.target.value)}
-            />
-          )}
-          renderOption={(props, option: GetIngredientNameResponse) => (
-            <li {...props} key={option.fdc_id}>
-              {option.description}
-            </li>
-          )}
-        />
-      </div>
-
-      <Select
-        value={dataSource}
-        onChange={(e) => setDataSource(e.target.value as string)}
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        height: "100vh",
+      }}
+    >
+      <Box
+        sx={{
+          width: "100%",
+          "@media (min-width: 600px)": {
+            width: "70%",
+          },
+        }}
       >
-        <MenuItem value={"foundation_food"}>Foundation Food</MenuItem>
-        <MenuItem value={"sr_legacy_food"}>SR Legacy Food</MenuItem>
-        <MenuItem value={"survey_fndds_food"}>Survey FNDDS Food</MenuItem>
-        <MenuItem value={"user_food"}>User Food</MenuItem>
-        {/* <MenuItem value={"branded_food"}>Branded Food</MenuItem> */}
-      </Select>
+        <Typography sx={{ mb: 3 }} variant="h4">
+          Build Recipe
+        </Typography>
 
-      <BootstrapDialog
-        onClose={handleClose}
-        aria-labelledby="customized-dialog-title"
-        open={open}
-      >
-        {isIngredientFetching && (
-          <div style={{ padding: "1rem" }}>Loading...</div>
-        )}
-        {!isIngredientFetching && ingredient && (
-          <>
-            <BootstrapDialogTitle
-              id="customized-dialog-title"
-              onClose={handleClose}
-            >
-              {ingredient.description}
-            </BootstrapDialogTitle>
-            <DialogContent dividers>
-              <TextField
-                label="Portion"
-                type="number"
-                value={portion}
-                onChange={(e) => setPortion(+e.target.value)}
-              />
+        <Card>
+          <CardContent>
+            <Grid container spacing={3}>
+              <Grid item xs={12}>
+                <Typography gutterBottom variant="h6">
+                  Recipe Name
+                </Typography>
+                <TextField
+                  label="Give your recipe a name"
+                  type="text"
+                  value={recipeName}
+                  onChange={(e) => setRecipeName(e.target.value)}
+                  fullWidth
+                />
+              </Grid>
 
-              <Select value={unit} onChange={(e) => setUnit(+e.target.value)}>
-                {ingredient.foodportions.map((portion, index) => (
-                  <MenuItem key={index} value={index}>
-                    {portion.id === 9999
-                      ? dataSource === "survey_fndds_food"
-                        ? portion.portion_description
-                        : portion.modifier
-                      : portion.measureUnit}{" "}
-                    ({(portion.gramWeight / (portion.amount | 1)).toFixed(2)}
-                    g)
-                  </MenuItem>
-                ))}
-              </Select>
-            </DialogContent>
-            <DialogContent dividers>
-              <div>
-                {ingredient.foodnutrients &&
-                  ingredient.foodnutrients.slice(0, 30).map((nutrient) => (
-                    <Typography key={nutrient.id}>
-                      {nutrient.name}{" "}
-                      {((nutrient.amount / 100) * weight).toFixed(2)}{" "}
-                      {nutrient.unitName.toLowerCase()}
-                    </Typography>
-                  ))}
-              </div>
-            </DialogContent>
+              <Grid item xs={12}>
+                <Typography gutterBottom variant="h6">
+                  Recipe Source
+                </Typography>
+                <TextField
+                  label="Recipe Source (optional) (ie. https://www.allrecipes.com/cucumber-lime-tonic)"
+                  type="text"
+                  value={recipeSource}
+                  onChange={(e) => setRecipeSource(e.target.value)}
+                  fullWidth
+                />
+              </Grid>
 
-            <DialogActions>
-              <Button autoFocus onClick={addToRecipe}>
-                Add to Recipe
-              </Button>
-            </DialogActions>
-          </>
-        )}
-      </BootstrapDialog>
-      {/* 
+              <Grid item xs={12}>
+                <Typography gutterBottom variant="h6">
+                  Ingredients
+                </Typography>
+                <Grid container spacing={1}>
+                  <Grid item xs={7}>
+                    <Autocomplete
+                      options={ingredientName || []}
+                      getOptionLabel={(option) => option.description}
+                      onChange={handleOptionClick}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label="Search for ingredients"
+                          variant="outlined"
+                          size="small"
+                          fullWidth
+                          // value={query}
+                          // onChange={(e) => setQuery(e.target.value)}
+                        />
+                      )}
+                      renderOption={(
+                        props,
+                        option: GetIngredientNameResponse
+                      ) => (
+                        <li {...props} key={option.fdc_id}>
+                          {option.description}
+                        </li>
+                      )}
+                    />
+                  </Grid>
+
+                  <Grid item xs={5}>
+                    <Select
+                      value={dataSource}
+                      onChange={(e) => setDataSource(e.target.value as string)}
+                      sx={{ height: "40px", width: "100%" }}
+                    >
+                      <MenuItem value={"foundation_food"}>
+                        Foundation Food
+                      </MenuItem>
+                      <MenuItem value={"sr_legacy_food"}>
+                        SR Legacy Food
+                      </MenuItem>
+                      <MenuItem value={"survey_fndds_food"}>
+                        Survey FNDDS Food
+                      </MenuItem>
+                      <MenuItem value={"user_food"}>User Food</MenuItem>
+                      {/* <MenuItem value={"branded_food"}>Branded Food</MenuItem> */}
+                    </Select>
+                  </Grid>
+                </Grid>
+              </Grid>
+
+              <BootstrapDialog
+                onClose={handleClose}
+                aria-labelledby="customized-dialog-title"
+                open={open}
+              >
+                {isIngredientFetching && (
+                  <div style={{ padding: "1rem" }}>Loading...</div>
+                )}
+                {!isIngredientFetching && ingredient && (
+                  <>
+                    <BootstrapDialogTitle
+                      id="customized-dialog-title"
+                      onClose={handleClose}
+                    >
+                      {ingredient.description}
+                    </BootstrapDialogTitle>
+                    <DialogContent dividers>
+                      <TextField
+                        label="Portion"
+                        type="number"
+                        value={portion}
+                        onChange={(e) => setPortion(+e.target.value)}
+                      />
+
+                      <Select
+                        value={unit}
+                        onChange={(e) => setUnit(+e.target.value)}
+                      >
+                        {ingredient.foodportions.map((portion, index) => (
+                          <MenuItem key={index} value={index}>
+                            {portion.id === 9999
+                              ? dataSource === "survey_fndds_food"
+                                ? portion.portion_description
+                                : portion.modifier
+                              : portion.measureUnit}{" "}
+                            (
+                            {(
+                              portion.gramWeight /
+                              (portion.amount | 1)
+                            ).toFixed(2)}
+                            g)
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </DialogContent>
+                    <DialogContent dividers>
+                      <div>
+                        {ingredient.foodnutrients &&
+                          ingredient.foodnutrients
+                            .slice(0, 30)
+                            .map((nutrient) => (
+                              <Typography key={nutrient.id}>
+                                {nutrient.name}{" "}
+                                {((nutrient.amount / 100) * weight).toFixed(2)}{" "}
+                                {nutrient.unitName.toLowerCase()}
+                              </Typography>
+                            ))}
+                      </div>
+                    </DialogContent>
+
+                    <DialogActions>
+                      <Button autoFocus onClick={addToRecipe}>
+                        Add to Recipe
+                      </Button>
+                    </DialogActions>
+                  </>
+                )}
+              </BootstrapDialog>
+
+              {/* 
       {recipe.length > 0 && (
         <div>
           <Typography variant="h6">Ingredients</Typography>
@@ -400,138 +456,172 @@ const Ingredients = () => {
         </div>
       )} */}
 
-      {recipe.length > 0 && (
-        <div>
-          <Typography variant="h6">Ingredients</Typography>
-          <DragDropContext onDragEnd={handleDragEnd}>
-            <Droppable droppableId="ingredientList">
-              {(provided) => (
-                <ul {...provided.droppableProps} ref={provided.innerRef}>
-                  {recipe.map((item, index) => (
-                    <Draggable
-                      key={index}
-                      draggableId={index.toString()}
-                      index={index}
-                    >
-                      {(provided) => (
-                        <li
-                          ref={provided.innerRef}
-                          {...provided.draggableProps}
-                          {...provided.dragHandleProps}
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            ...provided.draggableProps.style,
-                          }}
-                        >
-                          <Typography>
-                            {item.fdc_id !== 77777 && item.amount + " g"}{" "}
-                            {item.name}
-                          </Typography>
-                          <IconButton
-                            onClick={handleDelete(item.fdc_id, item.name)}
-                            sx={{
-                              color: (theme) => theme.palette.grey[500],
-                            }}
+              <Grid item xs={12}>
+                {recipe.length > 0 && (
+                  <div>
+                    <DragDropContext onDragEnd={handleDragEnd}>
+                      <Droppable droppableId="ingredientList">
+                        {(provided) => (
+                          <ul
+                            {...provided.droppableProps}
+                            ref={provided.innerRef}
                           >
-                            <CloseIcon />
-                          </IconButton>
-                        </li>
-                      )}
-                    </Draggable>
-                  ))}
-                  {provided.placeholder}
-                </ul>
-              )}
-            </Droppable>
-          </DragDropContext>
-        </div>
-      )}
+                            {recipe.map((item, index) => (
+                              <Draggable
+                                key={index}
+                                draggableId={index.toString()}
+                                index={index}
+                              >
+                                {(provided) => (
+                                  <li
+                                    ref={provided.innerRef}
+                                    {...provided.draggableProps}
+                                    {...provided.dragHandleProps}
+                                    style={{
+                                      display: "flex",
+                                      alignItems: "center",
+                                      ...provided.draggableProps.style,
+                                    }}
+                                  >
+                                    <Typography>
+                                      {item.fdc_id !== 77777 &&
+                                        item.amount + " g"}{" "}
+                                      {item.name}
+                                    </Typography>
+                                    <IconButton
+                                      onClick={handleDelete(
+                                        item.fdc_id,
+                                        item.name
+                                      )}
+                                      sx={{
+                                        color: (theme) =>
+                                          theme.palette.grey[500],
+                                      }}
+                                    >
+                                      <CloseIcon />
+                                    </IconButton>
+                                  </li>
+                                )}
+                              </Draggable>
+                            ))}
+                            {provided.placeholder}
+                          </ul>
+                        )}
+                      </Droppable>
+                    </DragDropContext>
+                  </div>
+                )}
+              </Grid>
 
-      <TextField
-        label="Header Name"
-        variant="outlined"
-        size="small"
-        fullWidth
-        value={header}
-        onChange={(e) => setHeader(e.target.value)}
-      />
+              <Grid item xs={8}>
+                <TextField
+                  label="Add header (ie. dough, filling, etc.)"
+                  variant="outlined"
+                  size="small"
+                  fullWidth
+                  value={header}
+                  onChange={(e) => setHeader(e.target.value)}
+                />
+              </Grid>
 
-      <Button variant="text" onClick={handleAddHeader}>
-        Add Header
-      </Button>
+              <Grid item xs={4}>
+                <Button
+                  variant="text"
+                  onClick={handleAddHeader}
+                  startIcon={<AddCircleOutlineIcon />}
+                  fullWidth
+                >
+                  Add Header
+                </Button>
+              </Grid>
 
-      <div>
-        <Typography variant="h6">Instructions</Typography>
-        {instructions.map((instruction, index) => (
-          <Box key={index} display="flex" alignItems="center" mb={2}>
-            <TextField
-              label={`Step ${index + 1}`}
-              value={instruction}
-              onChange={(e) => handleInstructionChange(index, e.target.value)}
-              fullWidth
-            />
-            <IconButton
-              color="secondary"
-              onClick={() => handleRemoveStep(index)}
-              aria-label="Remove Step"
-            >
-              <DeleteIcon />
-            </IconButton>
-          </Box>
-        ))}
+              <Grid item xs={12}>
+                <Typography gutterBottom variant="h6">
+                  Instructions
+                </Typography>
+                {instructions.map((instruction, index) => (
+                  <Box key={index} display="flex" alignItems="center" mb={2}>
+                    <TextField
+                      label={`Step ${index + 1}`}
+                      value={instruction}
+                      onChange={(e) =>
+                        handleInstructionChange(index, e.target.value)
+                      }
+                      fullWidth
+                    />
+                    <IconButton
+                      color="secondary"
+                      onClick={() => handleRemoveStep(index)}
+                      aria-label="Remove Step"
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </Box>
+                ))}
 
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleAddStep}
-          startIcon={<AddCircleOutlineIcon />}
-        >
-          Add Step
-        </Button>
-      </div>
+                <Button
+                  variant="text"
+                  color="primary"
+                  onClick={handleAddStep}
+                  startIcon={<AddCircleOutlineIcon />}
+                >
+                  Add Step
+                </Button>
+              </Grid>
 
-      <div>
-        <Typography variant="h6">Servings</Typography>
-        <TextField
-          label="Servings"
-          type="number"
-          value={servings}
-          onChange={(e) => setServings(+e.target.value)}
-        />
-      </div>
+              <Grid item xs={12}>
+                <Typography gutterBottom variant="h6">
+                  Servings
+                </Typography>
+                <TextField
+                  label="Servings"
+                  type="number"
+                  value={servings}
+                  onChange={(e) => setServings(+e.target.value)}
+                  fullWidth
+                />
+              </Grid>
 
-      <div>
-        <Typography variant="h6">Image</Typography>
-        <TextField
-          label="Image"
-          type="text"
-          value={image}
-          onChange={(e) => setImage(e.target.value)}
-          fullWidth
-        />
-      </div>
+              <Grid item xs={12}>
+                <Typography gutterBottom variant="h6">
+                  Image
+                </Typography>
+                <TextField
+                  label="Image address of your recipe (ie. https://www.image.com/fried-chicken.jpg)"
+                  type="text"
+                  value={image}
+                  onChange={(e) => setImage(e.target.value)}
+                  fullWidth
+                />
+              </Grid>
 
-      <div>
-        <Typography variant="h6">Preparation Time</Typography>
-        <TextField
-          label="Time in minutes"
-          type="number"
-          value={time}
-          onChange={(e) => setTime(+e.target.value)}
-        />
-      </div>
+              <Grid item xs={12}>
+                <Typography gutterBottom variant="h6">
+                  Preparation Time
+                </Typography>
+                <TextField
+                  label="Time in minutes"
+                  type="number"
+                  value={time}
+                  onChange={(e) => setTime(+e.target.value)}
+                  fullWidth
+                />
+              </Grid>
 
-      <div>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleCreateRecipe}
-        >
-          Create Recipe
-        </Button>
-      </div>
-    </>
+              <Grid item xs={12}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleCreateRecipe}
+                >
+                  Create Recipe
+                </Button>
+              </Grid>
+            </Grid>
+          </CardContent>
+        </Card>
+      </Box>
+    </div>
   );
 };
 
