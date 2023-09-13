@@ -46,7 +46,7 @@ const AddIngredient = () => {
   };
 
   const handleNutrientSelect = (
-    event: React.SyntheticEvent<Element, Event>,
+    _event: React.SyntheticEvent<Element, Event>,
     value: GetNutrientNameResponse | null
   ) => {
     console.log(value);
@@ -86,7 +86,7 @@ const AddIngredient = () => {
   };
 
   const handlePortionSelect = (
-    event: React.SyntheticEvent<Element, Event>,
+    _event: React.SyntheticEvent<Element, Event>,
     value: GetMeasureUnitNameResponse | null
   ) => {
     console.log(value);
@@ -178,9 +178,15 @@ const AddIngredient = () => {
           <Typography variant="h6" gutterBottom>
             Nutrients (per 100g)
           </Typography>
+          <Typography variant="subtitle1" gutterBottom>
+            Add nutritional info of this ingredient
+          </Typography>
           {ingredient.nutrients.map((nutrient) => (
-            <div style={{ display: "flex", alignItems: "center" }}>
-              <Typography key={nutrient.id}>
+            <div
+              style={{ display: "flex", alignItems: "center" }}
+              key={nutrient.id}
+            >
+              <Typography>
                 {nutrient.name} {nutrient.amount} {nutrient.unit}
               </Typography>
               <IconButton onClick={handleDeleteNutrient(nutrient.id)}>

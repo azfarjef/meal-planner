@@ -50,7 +50,7 @@ function App() {
       <ThemeProvider theme={theme}>
         <BrowserRouter>
           <CssBaseline />
-          <Box padding="110px 2rem 1rem 2rem">
+          <Box padding="110px 0.9rem 1rem 0.9rem">
             <Navbar />
             <ScrollToTop />
             <Routes>

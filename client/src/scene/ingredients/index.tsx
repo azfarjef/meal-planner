@@ -269,7 +269,7 @@ const Ingredients = () => {
         sx={{
           width: "100%",
           "@media (min-width: 600px)": {
-            width: "70%",
+            width: "80%",
           },
         }}
       >
@@ -311,7 +311,7 @@ const Ingredients = () => {
                   Ingredients
                 </Typography>
                 <Grid container spacing={1}>
-                  <Grid item xs={7}>
+                  <Grid item xs={12} md={7}>
                     <Autocomplete
                       options={ingredientName || []}
                       getOptionLabel={(option) => option.description}
@@ -338,7 +338,7 @@ const Ingredients = () => {
                     />
                   </Grid>
 
-                  <Grid item xs={5}>
+                  <Grid item xs={12} md={5}>
                     <Select
                       value={dataSource}
                       onChange={(e) => setDataSource(e.target.value as string)}
@@ -513,7 +513,7 @@ const Ingredients = () => {
                 )}
               </Grid>
 
-              <Grid item xs={8}>
+              <Grid item xs={12} md={8}>
                 <TextField
                   label="Add header (ie. dough, filling, etc.)"
                   variant="outlined"
@@ -524,7 +524,7 @@ const Ingredients = () => {
                 />
               </Grid>
 
-              <Grid item xs={4}>
+              <Grid item xs={12} md={4}>
                 <Button
                   variant="text"
                   onClick={handleAddHeader}
