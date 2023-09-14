@@ -17,6 +17,7 @@ import {
   DialogContent,
   DialogTitle,
   Grid,
+  LinearProgress,
   Menu,
   MenuItem,
   Select,
@@ -32,6 +33,77 @@ import daysjs, { Dayjs } from "dayjs";
 import { useNavigate } from "react-router-dom";
 
 const mealTypes = ["breakfast", "lunch", "dinner", "snack"];
+
+function CircularProgressWithLabel(props: {
+  value: number;
+  realValue: number;
+  name: string;
+  amount: number;
+  unit: string;
+}) {
+  return (
+    <Box
+      display="flex"
+      flexDirection="column"
+      alignItems="center"
+      justifyContent="center"
+      textAlign="center"
+      my="2rem"
+    >
+      <Box sx={{ position: "relative", display: "inline-flex" }}>
+        <CircularProgress
+          variant="determinate"
+          value={100}
+          sx={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            color: "rgb(167, 202, 237)",
+          }}
+          size={90}
+        />
+        <CircularProgress variant="determinate" size={90} {...props} />
+        <Box
+          sx={{
+            top: 0,
+            left: 0,
+            bottom: 0,
+            right: 0,
+            position: "absolute",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Typography
+            variant="caption"
+            component="div"
+            color="text.secondary"
+          >{`${Math.round(props.realValue)}%`}</Typography>
+        </Box>
+      </Box>
+      <Typography variant="body2">{props.name}:</Typography>
+      <Typography variant="body2" gutterBottom>
+        {props.amount.toFixed(2)} {props.unit}
+      </Typography>
+    </Box>
+  );
+}
+
+function LinearProgressWithLabel(props: { value: number; realValue: number }) {
+  return (
+    <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+      <Box sx={{ width: "100%", mr: 1 }}>
+        <LinearProgress variant="determinate" {...props} />
+      </Box>
+      <Box sx={{ minWidth: 35 }}>
+        <Typography variant="body2" color="text.secondary">{`${Math.round(
+          props.realValue
+        )}%`}</Typography>
+      </Box>
+    </Box>
+  );
+}
 
 const DayPlan = () => {
   const navigate = useNavigate();
@@ -281,9 +353,9 @@ const DayPlan = () => {
         </CardContent>
       </Card>
 
-      {meals ? (
+      {meals && nutrients && meals[0] ? (
         <Box>
-          <div>
+          <Box my={9}>
             {mealTypes.map((mealType) => (
               <div key={mealType}>
                 <Typography variant="h5" gutterBottom>
@@ -332,13 +404,13 @@ const DayPlan = () => {
                 </Grid>
               </div>
             ))}
-          </div>
+          </Box>
 
-          <Typography variant="h6" gutterBottom>
+          <Typography variant="h5" gutterBottom>
             Total Cost: RM {data?.total_price}
           </Typography>
 
-          <div>
+          {/* <div>
             <Typography variant="h6" gutterBottom>
               Total Nutrition:
             </Typography>
@@ -348,10 +420,55 @@ const DayPlan = () => {
                 {((item.amount / item.dv) * 100).toFixed(0)}%
               </Typography>
             ))}
-          </div>
+          </div> */}
+
+          <Box my={4}>
+            <Typography variant="h5" gutterBottom>
+              Today's Nutrition:
+            </Typography>
+            <Typography variant="body2" gutterBottom>
+              Percent Daily Values based on a {nutrients[0]?.dv.toFixed(0)}{" "}
+              calorie diet.
+            </Typography>
+            <Grid container spacing={1}>
+              {nutrients.slice(1, 4).map((item) => (
+                <Grid item xs={4} key={item.id}>
+                  <CircularProgressWithLabel
+                    value={
+                      (item.amount / item.dv) * 100 > 100
+                        ? 100
+                        : (item.amount / item.dv) * 100
+                    }
+                    realValue={(item.amount / item.dv) * 100}
+                    name={item.name}
+                    amount={item.amount}
+                    unit={item.unit_name}
+                  />
+                </Grid>
+              ))}
+            </Grid>
+            {nutrients
+              .slice(0, 29)
+              .filter((_item, index) => ![1, 2, 3].includes(index))
+              .map((item, index) => (
+                <div key={index}>
+                  <Typography variant="body2" gutterBottom>
+                    {item.name}: {item.amount.toFixed(2)} {item.unit_name}
+                  </Typography>
+                  <LinearProgressWithLabel
+                    value={
+                      (item.amount / item.dv) * 100 > 100
+                        ? 100
+                        : (item.amount / item.dv) * 100
+                    }
+                    realValue={(item.amount / item.dv) * 100}
+                  />
+                </div>
+              ))}
+          </Box>
         </Box>
       ) : (
-        <Typography variant="h6">No meals planned</Typography>
+        <Typography variant="h6">No meal planned</Typography>
       )}
     </>
   );
