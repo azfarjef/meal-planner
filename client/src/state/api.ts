@@ -69,6 +69,12 @@ export const api = createApi({
       query: ({ dateFrom, dateTo }) =>
         `grocery?dateFrom=${dateFrom}&dateTo=${dateTo}`,
     }),
+    removeItemFromPlan: build.mutation<string, number>({
+      query: (id) => ({
+        url: `plan/${id}`,
+        method: "DELETE",
+      }),
+    }),
   }),
 });
 
@@ -84,4 +90,5 @@ export const {
   useCreatePlanMutation,
   useGetPlanQuery,
   useGetGroceryListQuery,
+  useRemoveItemFromPlanMutation,
 } = api;

@@ -278,4 +278,19 @@ router.get("/:date", async (req, res) => {
 //   }
 // });
 
+router.delete("/:id", async (req, res) => {
+  const id = req.params.id;
+
+  try {
+    const deleteQuery = `
+      DELETE FROM meal_plan WHERE id = $1;
+    `;
+    await pool.query(deleteQuery, [id]);
+    res.status(200).json({ message: `Meal plan with ID: ${id} deleted` });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error });
+  }
+});
+
 export default router;

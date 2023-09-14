@@ -3,6 +3,7 @@ import {
   useGetIngredientNameQuery,
   useGetIngredientQuery,
   useGetPlanQuery,
+  useRemoveItemFromPlanMutation,
 } from "@/state/api";
 import {
   Autocomplete,
@@ -17,6 +18,7 @@ import {
   DialogContent,
   DialogTitle,
   Grid,
+  IconButton,
   LinearProgress,
   Menu,
   MenuItem,
@@ -24,6 +26,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { useParams } from "react-router-dom";
 import { useState } from "react";
 import { GetIngredientNameResponse } from "@/state/types";
@@ -36,7 +39,7 @@ const mealTypes = ["breakfast", "lunch", "dinner", "snack"];
 
 function CircularProgressWithLabel(props: {
   value: number;
-  realValue: number;
+  realvalue: number;
   name: string;
   amount: number;
   unit: string;
@@ -79,7 +82,7 @@ function CircularProgressWithLabel(props: {
             variant="caption"
             component="div"
             color="text.secondary"
-          >{`${Math.round(props.realValue)}%`}</Typography>
+          >{`${Math.round(props.realvalue)}%`}</Typography>
         </Box>
       </Box>
       <Typography variant="body2">{props.name}:</Typography>
@@ -90,7 +93,7 @@ function CircularProgressWithLabel(props: {
   );
 }
 
-function LinearProgressWithLabel(props: { value: number; realValue: number }) {
+function LinearProgressWithLabel(props: { value: number; realvalue: number }) {
   return (
     <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
       <Box sx={{ width: "100%", mr: 1 }}>
@@ -98,7 +101,7 @@ function LinearProgressWithLabel(props: { value: number; realValue: number }) {
       </Box>
       <Box sx={{ minWidth: 35 }}>
         <Typography variant="body2" color="text.secondary">{`${Math.round(
-          props.realValue
+          props.realvalue
         )}%`}</Typography>
       </Box>
     </Box>
@@ -118,13 +121,16 @@ const DayPlan = () => {
   const [open, setOpen] = useState(false);
   const [mealType, setMealType] = useState("breakfast");
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [anchorElCard, setAnchorElCard] = useState<null | HTMLElement>(null);
   const [openIngredient, setOpenIngredient] = useState(false);
   const openMenu = Boolean(anchorEl);
+  const openCardMenu = Boolean(anchorElCard);
   // const [amount, setAmount] = useState(1);
 
   console.log(date);
 
   const [createPlan] = useCreatePlanMutation();
+  const [removeItemFromPlan] = useRemoveItemFromPlanMutation();
   const { data: ingredientName } = useGetIngredientNameQuery(dataSource);
   const { data: ingredient, isFetching: isIngredientFetching } =
     useGetIngredientQuery(ingredientId || 0);
@@ -157,6 +163,7 @@ const DayPlan = () => {
 
   const handleCloseMenu = () => {
     setAnchorEl(null);
+    setAnchorElCard(null);
   };
 
   const handleClickMenuOption = (item: string) => {
@@ -180,6 +187,17 @@ const DayPlan = () => {
     setOpen(false);
   };
 
+  const handleClickRemove = async (id: number) => {
+    try {
+      await removeItemFromPlan(id).then(() => {
+        window.location.reload();
+      });
+    } catch (error) {
+      console.log(error);
+    }
+    setAnchorElCard(null);
+  };
+
   const handleCreatePlan = async () => {
     try {
       await createPlan({
@@ -189,7 +207,9 @@ const DayPlan = () => {
         date: dateFormatted,
         meal_type: mealType,
         amount: weight,
-      }).unwrap();
+      }).then(() => {
+        window.location.reload();
+      });
     } catch (error) {
       console.log(error);
     }
@@ -366,7 +386,13 @@ const DayPlan = () => {
                     .filter((meal) => meal.meal_type === mealType)
                     .map((meal) => (
                       <Grid item key={meal.id}>
-                        <Card sx={{ width: "168px", height: "100%" }}>
+                        <Card
+                          sx={{
+                            width: "168px",
+                            height: "100%",
+                            position: "relative",
+                          }}
+                        >
                           <CardMedia
                             component="img"
                             alt={meal.name}
@@ -378,6 +404,29 @@ const DayPlan = () => {
                                 : null
                             }
                           />
+                          <IconButton
+                            sx={{
+                              position: "absolute",
+                              top: 3,
+                              right: 3,
+                              backgroundColor: "rgba(255, 255, 255, 0.9)",
+                              borderRadius: 4,
+                            }}
+                            onClick={(e) => setAnchorElCard(e.currentTarget)}
+                          >
+                            <MoreVertIcon />
+                          </IconButton>
+                          <Menu
+                            anchorEl={anchorElCard}
+                            open={openCardMenu}
+                            onClose={handleCloseMenu}
+                          >
+                            <MenuItem
+                              onClick={() => handleClickRemove(meal.id)}
+                            >
+                              Remove from plan
+                            </MenuItem>
+                          </Menu>
                           <CardContent>
                             <Typography
                               variant="subtitle1"
@@ -439,7 +488,7 @@ const DayPlan = () => {
                         ? 100
                         : (item.amount / item.dv) * 100
                     }
-                    realValue={(item.amount / item.dv) * 100}
+                    realvalue={(item.amount / item.dv) * 100}
                     name={item.name}
                     amount={item.amount}
                     unit={item.unit_name}
@@ -461,7 +510,7 @@ const DayPlan = () => {
                         ? 100
                         : (item.amount / item.dv) * 100
                     }
-                    realValue={(item.amount / item.dv) * 100}
+                    realvalue={(item.amount / item.dv) * 100}
                   />
                 </div>
               ))}

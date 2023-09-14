@@ -116,6 +116,7 @@ const Navbar = () => {
             <Box sx={{ flexGrow: 1 }}>
               {items.map((item) => (
                 <ListItem
+                  key={item.title}
                   onClick={() => {
                     navigate(item.href);
                     toggleSidebar();
