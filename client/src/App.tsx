@@ -27,9 +27,15 @@ const theme = createTheme({
       fontSize: "2.25rem",
       lineHeight: 1.375,
     },
+    h5: {
+      fontWeight: 600,
+      fontSize: "1.5rem",
+      lineHeight: 1.375,
+    },
     h6: {
       fontWeight: 600,
       fontSize: "1.125rem",
+      lineHeight: 1.375,
     },
   },
 });

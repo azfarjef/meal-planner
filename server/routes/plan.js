@@ -87,7 +87,7 @@ router.get("/:date", async (req, res) => {
     });
 
     // Print price data type
-    console.log(typeof meals[0].price);
+    if (meals[0]) console.log(typeof meals[0].price);
 
     const total_price = Number(
       parseFloat(
