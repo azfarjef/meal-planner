@@ -5,6 +5,7 @@ import Ingredients from "./scene/ingredients";
 import Recipe from "./scene/recipe";
 import DayPlan from "./scene/day";
 import RecipeDetails from "./scene/recipeDetails";
+import RecipeEditor from "./scene/recipeEditor";
 import RecipeBuilder from "./scene/test";
 import AddIngredient from "./scene/addIngredient";
 import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
@@ -66,6 +67,7 @@ function App() {
               <Route path="/calendar" element={<Calendar />} />
               <Route path="/day/:dateParam" element={<DayPlan />} />
               <Route path="/recipe/:recipeId" element={<RecipeDetails />} />
+              <Route path="/recipe/:recipeId/edit" element={<RecipeEditor />} />
               <Route path="/recipeBuilder" element={<RecipeBuilder />} />
               <Route path="/grocery" element={<Grocery />} />
             </Routes>

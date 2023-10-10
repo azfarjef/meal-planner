@@ -33,7 +33,7 @@ import {
   DropResult,
 } from "react-beautiful-dnd";
 
-const BootstrapDialog = styled(Dialog)(({ theme }) => ({
+export const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
     padding: theme.spacing(2),
   },
@@ -48,7 +48,7 @@ export interface DialogTitleProps {
   onClose: () => void;
 }
 
-const BootstrapDialogTitle = (props: DialogTitleProps) => {
+export const BootstrapDialogTitle = (props: DialogTitleProps) => {
   const { children, onClose, ...other } = props;
 
   return (
@@ -396,10 +396,9 @@ const Ingredients = () => {
                                 : portion.modifier
                               : portion.measureUnit}{" "}
                             (
-                            {(
-                              portion.gramWeight /
-                              (portion.amount | 1)
-                            ).toFixed(2)}
+                            {portion.amount && portion.amount !== 0
+                              ? (portion.gramWeight / portion.amount).toFixed(2)
+                              : portion.gramWeight.toFixed(2)}
                             g)
                           </MenuItem>
                         ))}

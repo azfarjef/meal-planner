@@ -456,7 +456,7 @@ const DayPlan = () => {
           </Box>
 
           <Typography variant="h5" gutterBottom>
-            Total Cost: RM {data?.total_price}
+            Total Cost: RM {data?.total_price.toFixed(2)}
           </Typography>
 
           {/* <div>

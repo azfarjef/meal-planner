@@ -48,7 +48,7 @@ const Recipe = () => {
                         alt={recipe.name}
                         src={recipe.image}
                         variant="square"
-                        sx={{ width: 300, height: 300 }}
+                        sx={{ width: 270, height: 270 }}
                       />
                     </Box>
                     <Typography

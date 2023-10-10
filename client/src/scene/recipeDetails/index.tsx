@@ -16,8 +16,9 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
 import { useCreatePlanMutation, useGetRecipeQuery } from "@/state/api";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -41,6 +42,7 @@ const RecipeDetails = () => {
   const { recipeId } = useParams();
   const { data: recipe, isLoading } = useGetRecipeQuery(Number(recipeId));
   const [createPlan] = useCreatePlanMutation();
+  const navigate = useNavigate();
 
   const [open, setOpen] = useState(false);
   const [date, setDate] = useState<Dayjs>(daysjs());
@@ -118,13 +120,20 @@ const RecipeDetails = () => {
           }}
         />
         <CardContent>
-          <Button
-            variant="contained"
-            onClick={() => setOpen(true)}
-            style={{ marginBottom: 16 }}
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              mb: 4,
+            }}
           >
-            Add to meal plan
-          </Button>
+            <Button variant="contained" onClick={() => setOpen(true)}>
+              Add to meal plan
+            </Button>
+
+            <EditIcon onClick={() => navigate(`/recipe/${recipeId}/edit`)} />
+          </Box>
 
           <Dialog open={open} onClose={handleClose}>
             <DialogTitle>Add recipe to your meal plan</DialogTitle>
