@@ -46,14 +46,12 @@ That's why I decided to create this meal planner app, tailor-made for users who,
 
 Here are some snapshots of the app to provide a better understanding:
 
-- Recipe Creation and Nutrition Calculation:
-  Recipe Creation
-
-- Meal Planner:
-  Meal Planner
-
-- Grocery List Generation:
-  Grocery List
+<details><summary>Recipe Browser</summary><img src="https://github.com/azfarjef/meal-planner/assets/73651474/8500b4c4-e213-43d6-8663-b3b9812bb963"></details>
+<details><summary>Recipe Details</summary><img src="https://github.com/azfarjef/meal-planner/assets/73651474/9759a164-648a-4aa2-8841-e28686e936fc"></details>
+<details><summary>Recipe Nutritional Info</summary><img src="https://github.com/azfarjef/meal-planner/assets/73651474/db0b1398-7c5a-4d01-9c23-07ae1d12ed6a"></details>
+<details><summary>Meal Planner</summary><img src="https://github.com/azfarjef/meal-planner/assets/73651474/97105f54-4c75-4fe8-8218-8e91bb18ae1f"></details>
+<details><summary>Nutritional Info for Each Day</summary><img src="https://github.com/azfarjef/meal-planner/assets/73651474/fbb90350-84a3-4619-ba1a-c257b3bd21fb"></details>
+<details><summary>Grocery List Generation</summary><img src="https://github.com/azfarjef/meal-planner/assets/73651474/2d7e3b68-5657-4c10-82a9-30ff03476ecd"></details>
 
 Feel free to explore the code and the app to gain a deeper insight into its functionality.
 
